@@ -1,7 +1,7 @@
 import CALSA
 import Foundation
 
-public class ALSACore {
+public class ALSA {
 
     public init() {
         snd_lib_error_set_handler(nil)
@@ -11,38 +11,17 @@ public class ALSACore {
         snd_config_update_free_global()
     }
 
-    public func listDevices() -> [String] {
-        var rawDeviceHints: UnsafeMutablePointer<UnsafeMutableRawPointer?>?
-        var deviceNames: [String] = []
-
-        guard snd_device_name_hint(-1, "pcm", &rawDeviceHints) >= 0 else {
-            return deviceNames
-        }
-
-        var index = 0
-        while let deviceHint = rawDeviceHints?[index] {
-            if let name = snd_device_name_get_hint(deviceHint, "NAME"),
-                let description = snd_device_name_get_hint(deviceHint, "DESC") {
-                let deviceName = String(cString: name)
-                let deviceDescription = String(cString: description).replacingOccurrences(of: "\n", with: " ")
-                deviceNames.append("\(deviceName): \(deviceDescription)")
-
-                free(name)
-                free(description)
-            }
-            index += 1
-        }
-
-        snd_device_name_free_hint(rawDeviceHints)
-
-        return deviceNames
+    public func listDevices() throws -> [ALSADeviceInfo] {
+        let list = try ALSADevices.getList()
+        print(ControlInterface().getSoundCards())
+        return list
     }
 
-    public func playWAVFile(_ wavFile: WAVFile) {
+    public func playWAVFile(_ wavFile: WAVFile) throws {
         let bufferFrames = 1024
         let numChannels: UInt32 = 1
         
-        let pcmDevice = PCMDevice(format: .float, access: .readWriteInterleaved, channels: numChannels, rate: wavFile.sampleRate, softResample: 1, latency: 500000)
+        let pcmDevice = try PCMDevice(format: .float, access: .readWriteInterleaved, channels: numChannels, rate: wavFile.sampleRate, softResample: 1, latency: 500000)
         
         let bufferLength = bufferFrames * MemoryLayout<Float>.size
         let buffer = UnsafeMutableBufferPointer<Float>.allocate(capacity: bufferLength)
@@ -66,13 +45,13 @@ public class ALSACore {
         pcmDevice.drain()
     }
 
-    public func playSineWave(frequency: Float = 440.0, duration: TimeInterval = 5.0) {
+    public func playSineWave(frequency: Float = 440.0, duration: TimeInterval = 5.0) throws {
         let sampleRate: UInt32 = 44100
         let bufferFrames: Int = 1024
         let numChannels: UInt32 = 1
 
-        let pcmDevice = PCMDevice()
-        pcmDevice.setParams(format: SND_PCM_FORMAT_FLOAT, access: SND_PCM_ACCESS_RW_INTERLEAVED, channels: numChannels, rate: sampleRate, softResample: 1, latency: 500000)
+        let pcmDevice = try PCMDevice(device: "plughw:CARD=Device,DEV=0")
+        pcmDevice.setParams(format: .float, access: .readWriteInterleaved, channels: numChannels, rate: sampleRate, softResample: 1, latency: 500000)
 
         let bufferLength = bufferFrames * MemoryLayout<Float>.size
         let buffer = UnsafeMutableBufferPointer<Float>.allocate(capacity: bufferLength)
@@ -86,7 +65,7 @@ public class ALSACore {
             for frame in 0..<bufferFrames {
                 buffer[Int(frame)] = sin(Float(sampleIndex + UInt32(frame)) * increment)
             }
-            pcmDevice.writei(buffer: buffer, numFrames: bufferFrames)
+            try pcmDevice.write(buffer: buffer.baseAddress!, frameCount: UInt(bufferFrames))
         }
 
         pcmDevice.drain()

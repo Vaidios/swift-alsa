@@ -4,12 +4,12 @@ import XCTest
 final class ALSAWrapperTests: XCTestCase {
 
     func testInitialization() {
-        let _ = ALSACore()
+        let _ = ALSA()
     }
 
-    func testListDevices() {
-        let wrapper = ALSACore()
-        let devices = wrapper.listDevices()
+    func testListDevices() throws {
+        let wrapper = ALSA()
+        let devices = try wrapper.listDevices()
         
         print("Available ALSA devices:")
         for device in devices {
@@ -17,8 +17,13 @@ final class ALSAWrapperTests: XCTestCase {
         }
     }
 
-    func testSineWavePlayback() {
-        let wrapper = ALSACore()
-        wrapper.playSineWave(frequency: 440.0, duration: 2.0)
+    func testSineWavePlayback() throws {
+        let wrapper = ALSA()
+        try wrapper.playSineWave(frequency: 440.0, duration: 3.0)
+    }
+
+    func testPassthrough() throws {
+        let passthrough = AudioPassThrough()
+        try passthrough.start()
     }
 }
