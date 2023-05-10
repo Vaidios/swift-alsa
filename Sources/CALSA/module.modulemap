@@ -1,0 +1,5 @@
+module CALSA [system] {
+    header "/usr/include/alsa/asoundlib.h"
+    link "asound"
+    export *
+}
