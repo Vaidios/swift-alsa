@@ -40,7 +40,7 @@ let package = Package(
         ),
 
         .testTarget(
-            name: "ALSAWrapperTests",
+            name: "ALSATests",
             dependencies: ["ALSA"]),
     ]
 )
