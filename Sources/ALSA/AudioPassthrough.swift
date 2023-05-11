@@ -1,15 +1,15 @@
 import Foundation
 
-class AudioPassThrough {
+public class AudioPassThrough {
     let wrapper: ALSA
     var capturePCM: OpaquePointer?
     var playbackPCM: OpaquePointer?
 
-    init() {
+    public init() {
         wrapper = ALSA()
     }
 
-    func start() throws {
+    public func start() async throws {
         // Open the capture device (microphone)
         let capturePCM = try PCMDevice(device: "plughw:CARD=Device,DEV=0", stream: .capture, mode: 0)
         let playbackPCM = try PCMDevice(device: "plughw:CARD=Device,DEV=0", stream: .playback, mode: 0)
@@ -27,11 +27,13 @@ class AudioPassThrough {
         let framesPerPeriod = rate / 10 // 10 periods per second
         let bufferSize = framesPerPeriod * channels * 2 // 2 bytes per sample for SND_PCM_FORMAT_S16_LE
         let buffer = UnsafeMutableBufferPointer<Int8>.allocate(capacity: Int(bufferSize))
-
+        defer {  buffer.deallocate() }
+        
         try capturePCM.prepare()
         try playbackPCM.prepare()
         // In a loop, read audio data from the capture device and write it to the playback device
         while true {
+            try Task.checkCancellation()
             do {
                 let framesRead = try capturePCM.read(buffer: buffer.baseAddress!, frameCount: UInt(framesPerPeriod))
                 let framesWritten = try playbackPCM.write(buffer: buffer.baseAddress!, frameCount: UInt(framesPerPeriod))
@@ -40,8 +42,5 @@ class AudioPassThrough {
                 
             }
         }
-
-        // Clean up
-        buffer.deallocate()
     }
 }

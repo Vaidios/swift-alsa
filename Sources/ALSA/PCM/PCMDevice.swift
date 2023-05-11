@@ -12,11 +12,11 @@ enum PCMDeviceError: Error {
 
 public class PCMDevice {
 
-    private var pcm: OpaquePointer { _pcm! }
-    private var _pcm: OpaquePointer?
+    // private var pcm: OpaquePointer { _pcm! }
+    private var pcm: OpaquePointer?
 
     public init(device: String = "default", stream: PCMStream = .playback, mode: Int32 = 0) throws {
-        snd_pcm_open(&_pcm, device, stream.cType, mode)
+        snd_pcm_open(&pcm, device, stream.cType, mode)
     }
     
     public convenience init(format: PCMFormat, access: PCMAccess, channels: UInt32, rate: UInt32, softResample: Int32, latency: UInt32) throws {
@@ -25,7 +25,9 @@ public class PCMDevice {
     }
 
     deinit {
+        snd_pcm_drop(pcm)
         snd_pcm_close(pcm)
+        print("PCM device deinit")
     }
 
     public func setParams(format: PCMFormat, access: PCMAccess, channels: UInt32, rate: UInt32, softResample: Int32, latency: UInt32) {

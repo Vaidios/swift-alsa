@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Example",
+            "program": "${workspaceFolder:ALSAWrapper}/.build/debug/Example",
+            "args": [],
+            "cwd": "${workspaceFolder:ALSAWrapper}",
+            "preLaunchTask": "swift: Build Debug Example"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Release Example",
+            "program": "${workspaceFolder:ALSAWrapper}/.build/release/Example",
+            "args": [],
+            "cwd": "${workspaceFolder:ALSAWrapper}",
+            "preLaunchTask": "swift: Build Release Example"
+        }
+    ]
+}

@@ -1,5 +1,5 @@
 import XCTest
-@testable import ALSAWrapper
+@testable import ALSA
 
 final class ALSAWrapperTests: XCTestCase {
 
@@ -22,8 +22,12 @@ final class ALSAWrapperTests: XCTestCase {
         try wrapper.playSineWave(frequency: 440.0, duration: 3.0)
     }
 
-    func testPassthrough() throws {
+    func testPassthrough() async throws {
         let passthrough = AudioPassThrough()
-        try passthrough.start()
+        let task = Task { 
+            try await passthrough.start()
+        }
+        try await Task.sleep(for: .seconds(5))
+        task.cancel()
     }
 }
