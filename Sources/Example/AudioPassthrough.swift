@@ -1,18 +1,17 @@
+import ALSA
 import Foundation
 
 public class AudioPassThrough {
-    let wrapper: ALSA
-    var capturePCM: OpaquePointer?
-    var playbackPCM: OpaquePointer?
 
-    public init() {
-        wrapper = ALSA()
+    private let capturePCM: PCMDevice
+    private let playbackPCM: PCMDevice
+
+    public init(inputDevice: String = "plughw:CARD=Device,DEV=0", outputDevice: String = "plughw:CARD=Device,DEV=0") throws {
+        capturePCM = try PCMDevice(device: inputDevice, stream: .capture, mode: 0)
+        playbackPCM = try PCMDevice(device: outputDevice, stream: .playback, mode: 0)
     }
 
     public func start() async throws {
-        // Open the capture device (microphone)
-        let capturePCM = try PCMDevice(device: "plughw:CARD=Device,DEV=0", stream: .capture, mode: 0)
-        let playbackPCM = try PCMDevice(device: "plughw:CARD=Device,DEV=0", stream: .playback, mode: 0)
 
         // Set up the PCM parameters
         let format: PCMFormat = .s16LE
@@ -39,7 +38,6 @@ public class AudioPassThrough {
                 let framesWritten = try playbackPCM.write(buffer: buffer.baseAddress!, frameCount: UInt(framesPerPeriod))
             } catch {
                 print("error: \(error)")
-                
             }
         }
     }
