@@ -4,7 +4,7 @@ import ArgumentParser
 struct AudioPassthroughExample: AsyncParsableCommand {
 
     func run() async throws {
-        let passthrough = AudioPassThrough()
+        let passthrough = try AudioPassThrough()
         try await passthrough.start()
     }
 }

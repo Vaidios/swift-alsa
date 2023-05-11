@@ -29,8 +29,8 @@ let package = Package(
             dependencies: [
                 .target(name: "ALSA"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                ]
-            ),
+            ]
+        ),
 
         .systemLibrary(
             name: "CALSA", 
