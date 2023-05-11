@@ -4,18 +4,18 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug Example",
-            "program": "${workspaceFolder:ALSAWrapper}/.build/debug/Example",
+            "program": "${workspaceFolder:SwiftyALSA}/.build/debug/Example",
             "args": [],
-            "cwd": "${workspaceFolder:ALSAWrapper}",
+            "cwd": "${workspaceFolder:SwiftyALSA}",
             "preLaunchTask": "swift: Build Debug Example"
         },
         {
             "type": "lldb",
             "request": "launch",
             "name": "Release Example",
-            "program": "${workspaceFolder:ALSAWrapper}/.build/release/Example",
+            "program": "${workspaceFolder:SwiftyALSA}/.build/release/Example",
             "args": [],
-            "cwd": "${workspaceFolder:ALSAWrapper}",
+            "cwd": "${workspaceFolder:SwiftyALSA}",
             "preLaunchTask": "swift: Build Release Example"
         }
     ]
