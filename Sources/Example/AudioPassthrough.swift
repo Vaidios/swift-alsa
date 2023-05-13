@@ -11,16 +11,16 @@ public class AudioPassThrough {
         playbackPCM = try PCMDevice(device: outputDevice, stream: .playback, mode: 0)
     }
 
-    public func start() async throws {
+    public func run() async throws {
 
         // Set up the PCM parameters
-        let format: PCMFormat = .s16LE
+        let format: PCMFormat = .s16
         let channels: UInt32 = 2
         var rate:UInt32 = 44100
         var bufferTime: UInt32 = 200000 // 0.5 seconds
         var periodTime: UInt32 = 100000 // 0.1 seconds
-        capturePCM.setHardwareParams(format: format, access: .readWriteInterleaved, rate: &rate, channels: channels, bufferTime: &bufferTime, periodTime: &periodTime)
-        playbackPCM.setHardwareParams(format: format, access: .readWriteInterleaved, rate: &rate, channels: channels, bufferTime: &bufferTime, periodTime: &periodTime)
+        capturePCM.setHardwareParams(format: format, access: .rwInterleaved, rate: &rate, channels: channels, bufferTime: &bufferTime, periodTime: &periodTime)
+        playbackPCM.setHardwareParams(format: format, access: .rwInterleaved, rate: &rate, channels: channels, bufferTime: &bufferTime, periodTime: &periodTime)
 
         // Set up a buffer for the audio data
         let framesPerPeriod = rate / 10 // 10 periods per second

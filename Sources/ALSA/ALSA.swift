@@ -11,7 +11,7 @@ public class ALSA {
         snd_config_update_free_global()
     }
 
-    public func listDevices() throws -> [ALSADeviceInfo] {
+    static public func listDevices() throws -> [ALSADeviceInfo] {
         let list = try ALSADevices.getList()
         print(ControlInterface().getSoundCards())
         return list
@@ -21,7 +21,7 @@ public class ALSA {
         let bufferFrames = 1024
         let numChannels: UInt32 = 1
         
-        let pcmDevice = try PCMDevice(format: .float, access: .readWriteInterleaved, channels: numChannels, rate: wavFile.sampleRate, softResample: 1, latency: 500000)
+        let pcmDevice = try PCMDevice(format: .float, access: .rwInterleaved, channels: numChannels, rate: wavFile.sampleRate, softResample: 1, latency: 500000)
         
         let bufferLength = bufferFrames * MemoryLayout<Float>.size
         let buffer = UnsafeMutableBufferPointer<Float>.allocate(capacity: bufferLength)
@@ -51,7 +51,7 @@ public class ALSA {
         let numChannels: UInt32 = 1
 
         let pcmDevice = try PCMDevice(device: "plughw:CARD=Device,DEV=0")
-        pcmDevice.setParams(format: .float, access: .readWriteInterleaved, channels: numChannels, rate: sampleRate, softResample: 1, latency: 500000)
+        pcmDevice.setParams(format: .float, access: .rwInterleaved, channels: numChannels, rate: sampleRate, softResample: 1, latency: 500000)
 
         let bufferLength = bufferFrames * MemoryLayout<Float>.size
         let buffer = UnsafeMutableBufferPointer<Float>.allocate(capacity: bufferLength)

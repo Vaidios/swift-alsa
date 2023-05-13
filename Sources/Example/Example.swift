@@ -1,10 +1,15 @@
 import ArgumentParser
 
 @main
-struct AudioPassthroughExample: AsyncParsableCommand {
+struct Examples: AsyncParsableCommand {
 
     func run() async throws {
-        let passthrough = try AudioPassThrough()
-        try await passthrough.start()
+
+        let audioPassThrough = try AudioPassThrough()
+        try await audioPassThrough.run()
+
+        // let playback = SoundPlayback()
+        // try playback.run()
+        
     }
 }
