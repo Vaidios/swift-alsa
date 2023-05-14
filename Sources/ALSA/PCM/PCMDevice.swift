@@ -104,9 +104,17 @@ public class PCMDevice {
             }
     }
 
-    public func write(buffer: UnsafeMutableRawPointer, frameCount: UInt) throws -> Int {
+    public func write(_ buffer: inout [UInt8], bytesPerFrame: Int16) throws {
+        let bufferCount = buffer.count
+        try buffer.withUnsafeMutableBufferPointer { bufferPtr in
+            let frameCount = bufferCount / Int(bytesPerFrame)
+            try self.write(buffer: bufferPtr.baseAddress!, frameCount: UInt(frameCount))
+        }
+    }
+
+    public func write(buffer: UnsafeMutableRawPointer, frameCount: UInt) throws {
         let result = snd_pcm_writei(pcm, buffer, frameCount)
-        guard result < 0 else { return result } 
+        guard result < 0 else { return } 
         switch Int32(result) {
             case -EBADFD:
                 throw PCMDeviceError.invalidState

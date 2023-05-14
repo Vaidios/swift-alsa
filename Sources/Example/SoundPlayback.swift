@@ -3,6 +3,10 @@ import Foundation
 
 import Foundation
 
+enum WavfileError: Error {
+    case endOfFile
+}
+
 struct WAVFile {
 
     let sampleRate: Int32
@@ -25,9 +29,11 @@ struct WAVFile {
         self.bitDepth = bitDepthData.withUnsafeBytes { $0.load(as: Int16.self) }
     }
 
-    func readData(offset: UInt64, length: Int) -> Data {
+    func readData(offset: UInt64, length: Int) throws -> [UInt8] {
         self.filehandle.seek(toFileOffset: offset)
-        return self.filehandle.readData(ofLength: length)
+        let data = Array(self.filehandle.readData(ofLength: length))
+        if data.count == 0 { throw WavfileError.endOfFile }
+        return data
     }
 
     static func readData(using filehandle: FileHandle, offset: UInt64, length: Int) -> Data {
@@ -78,16 +84,8 @@ struct SoundPlayback {
         let bytesPerFrame = wavFile.channels * (wavFile.bitDepth / 8)
         let bufferSize = framesPerBuffer * Int(bytesPerFrame)
         while true {
-            let bufferData = wavFile.readData(offset: try wavFile.filehandle.offset(), length: bufferSize)
-            if bufferData.count == 0 {
-                print("End of file")
-                break
-            }
-            var bufferArray = Array(bufferData)
-            try bufferArray.withUnsafeMutableBufferPointer { buffer in
-                let frameCount = buffer.count / Int(bytesPerFrame)
-                try pcm.write(buffer: buffer.baseAddress!, frameCount: UInt(frameCount))
-            }
+            var bufferData = try wavFile.readData(offset: try wavFile.filehandle.offset(), length: bufferSize)
+            try pcm.write(&bufferData, bytesPerFrame: bytesPerFrame)
         }
 
     }
