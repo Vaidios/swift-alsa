@@ -1,7 +1,7 @@
 import CALSA
 
 public extension PCMDevice {
-    public func printFormatSupport() throws {
+    func printFormatSupport() throws {
         print("Format supports")
         for format in PCMFormat.allCases {
             if format == .unknown { continue }
@@ -11,7 +11,7 @@ public extension PCMDevice {
         }
     }
 
-    public func printAccessSupport() throws {
+    func printAccessSupport() throws {
         print("Access support")
         for format in PCMAccess.allCases {
             let value = snd_pcm_hw_params_test_access(pcm, params, format.cType)
@@ -20,7 +20,7 @@ public extension PCMDevice {
         }
     }
 
-    public func printSupportedChannels() throws {
+     func printSupportedChannels() throws {
         var minChannels: UInt32 = 0
         var maxChannels: UInt32 = 0
 
@@ -39,7 +39,7 @@ public extension PCMDevice {
         print("Supported channels: \(minChannels) to \(maxChannels)")
     }
 
-    public func printSupportedSampleRates() throws {
+    func printSupportedSampleRates() throws {
     var minRate: UInt32 = 0
     var maxRate: UInt32 = 0
     var dir: Int32 = 0

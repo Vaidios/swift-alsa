@@ -9,26 +9,25 @@ struct SoundPlayback {
             print(device)
         }
 
-        var rate: UInt32 = 44100
+        let rate: UInt32 = 44100
 
         let pcm = try PCMDevice(device: "plughw:CARD=Device,DEV=0", stream: .playback, mode: 0)
         
-        try pcm.printAccessSupport()
         try pcm.setAccess(.rwInterleaved)
-
-        try pcm.printFormatSupport()
         try pcm.setFormat(.s8)
-
-        try pcm.printSupportedChannels()
         try pcm.setChannels(1)
-
-        try pcm.printSupportedSampleRates()
-        try pcm.setRateNear(&rate)
+        try pcm.setRateNear(rate)
 
         print("PCM name: \(pcm.name)")
         print("PCM state: \(pcm.state)")
-        print(" channels: \(try pcm.getChannels())")
+        let channels = try pcm.getChannels()
+        print(" channels: \(channels)")
         print(" rate: \(try pcm.getRate()) bps")
+
+
+
+        let frames = try pcm.getPeriodSize()
+        let bufferSize = frames * UInt(channels) * 2
 
         let periodTime = try pcm.getPeriodTime()
         print("Period time \(periodTime)")
