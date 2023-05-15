@@ -1,15 +1,25 @@
 import ArgumentParser
+import ALSA
 
 @main
 struct Examples: AsyncParsableCommand {
 
     func run() async throws {
 
-        // let audioPassThrough = try AudioPassThrough()
-        // try await audioPassThrough.run()
+        for device in try ALSA.listDevices() {
+            print(device)
+        }
+        // Task {
+        //     let audioPassThrough = try AudioPassThrough()
+        //     try await audioPassThrough.run()
+        // }
 
-        let playback = SoundPlayback()
-        try playback.run()
-        
+        Task {
+            let playback = SoundPlayback()
+            try playback.run()
+        }
+
+
+        try await Task.sleep(for: .seconds(30))
     }
 }

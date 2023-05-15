@@ -63,21 +63,19 @@ public class PCMDevice {
     public func setChannels(_ channels: UInt32) throws { try hwParams.setChannels(channels) }
     public func getChannels() throws -> UInt32 { try hwParams.getChannels() }
     public func setRateNear(_ rate: UInt32) throws { try hwParams.setRateNear(rate) }
+    public func setBufferTimeNear(_ bufferTime: UInt32) throws { try hwParams.setBufferTimeNear(bufferTime) }
+    public func setPeriodTimeNear(_ periodTime: UInt32) throws { try hwParams.setPeriodTimeNear(periodTime) }
     public func getRate() throws -> UInt32 { try hwParams.getRate() }
     public func getPeriodTime() throws -> UInt32 { try hwParams.getPeriodTime() }
     public func getPeriodSize() throws -> UInt { try hwParams.getPeriodSize() }
 
-    public func setHardwareParams(format: PCMFormat, access: PCMAccess, rate: inout UInt32, channels: UInt32, bufferTime: inout UInt32, periodTime: inout UInt32) {
-        var params: OpaquePointer?
-        snd_pcm_hw_params_malloc(&params)
-        snd_pcm_hw_params_any(pcm, params)
-        snd_pcm_hw_params_set_format(pcm, params, format.cType)
-        snd_pcm_hw_params_set_access(pcm, params, access.cType)
-        snd_pcm_hw_params_set_rate_near(pcm, params, &rate, nil)
-        snd_pcm_hw_params_set_channels(pcm, params, channels)
-        snd_pcm_hw_params_set_buffer_time_near(pcm, params, &bufferTime, nil)
-        snd_pcm_hw_params_set_period_time_near(pcm, params, &periodTime, nil)
-        snd_pcm_hw_params(pcm, params)
+    public func setHardwareParams(format: PCMFormat, access: PCMAccess, rate: inout UInt32, channels: UInt32, bufferTime: inout UInt32, periodTime: inout UInt32) throws {
+        try setFormat(format)
+        try setAccess(access)
+        try setRateNear(rate)
+        try setChannels(channels)
+        try setBufferTimeNear(bufferTime)
+        try setPeriodTimeNear(periodTime)
     }
     
     public func playBuffer(buffer: UnsafeMutableBufferPointer<Float>, numFrames: Int) {
@@ -88,10 +86,18 @@ public class PCMDevice {
         snd_pcm_prepare(pcm)
     }
 
+    public func read(to buffer: inout [UInt8], size: UInt) throws -> Int {
+        // let bufferCount = UInt(buffer.count)
+        // let frameCount = bufferCount / size
+        return try buffer.withUnsafeMutableBufferPointer { bufferPtr in 
+            return try read(buffer: bufferPtr.baseAddress!, frameCount: size)
+        }
+    }
+
     public func read(buffer: UnsafeMutableRawPointer, frameCount: UInt) throws -> Int {
         let result = snd_pcm_readi(pcm, buffer, frameCount)
-            guard result < 0 else { return result } 
-            switch Int32(result) {
+        guard result < 0 else { return result } 
+        switch Int32(result) {
             case -EBADFD:
                 throw PCMDeviceError.invalidState
             case -EPIPE:
@@ -101,20 +107,18 @@ public class PCMDevice {
                 throw PCMDeviceError.suspendEventOccured
             default:
                 throw PCMDeviceError.unknown
-            }
-    }
-
-    public func write(_ buffer: inout [UInt8], bytesPerFrame: Int16) throws {
-        let bufferCount = buffer.count
-        try buffer.withUnsafeMutableBufferPointer { bufferPtr in
-            let frameCount = bufferCount / Int(bytesPerFrame)
-            try self.write(buffer: bufferPtr.baseAddress!, frameCount: UInt(frameCount))
         }
     }
 
-    public func write(buffer: UnsafeMutableRawPointer, frameCount: UInt) throws {
-        let result = snd_pcm_writei(pcm, buffer, frameCount)
-        guard result < 0 else { return } 
+    public func write(from buffer: inout [UInt8], size: UInt) throws -> Int {
+        return try buffer.withUnsafeMutableBufferPointer { [weak self] bufferPtr in
+            try self?.write(buffer: bufferPtr.baseAddress!, size: size) ?? 0
+        }
+    }
+
+    public func write(buffer: UnsafeMutableRawPointer, size: snd_pcm_uframes_t) throws -> Int {
+        let result = snd_pcm_writei(pcm, buffer, size)
+        guard result < 0 else { return result } 
         switch Int32(result) {
             case -EBADFD:
                 throw PCMDeviceError.invalidState

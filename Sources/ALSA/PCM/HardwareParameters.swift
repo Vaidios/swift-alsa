@@ -6,6 +6,8 @@ final class HardwareParameters {
     private var format: PCMFormat?
     private var channels: UInt32?
     private var rateNear: UInt32?
+    private var bufferTimeNear: UInt32?
+    private var periodTimeNear: UInt32?
 
     private let pcm: OpaquePointer
     private let params: OpaquePointer
@@ -45,6 +47,16 @@ final class HardwareParameters {
 
     func setRateNear(_ rate: UInt32) throws {
         self.rateNear = rate
+        try setParameters()
+    }
+
+    func setBufferTimeNear(_ bufferTime: UInt32) throws {
+        self.bufferTimeNear = bufferTime
+        try setParameters()
+    }
+
+    func setPeriodTimeNear(_ periodTime: UInt32) throws { 
+        self.periodTimeNear = periodTime
         try setParameters()
     }
 
@@ -135,6 +147,26 @@ private extension HardwareParameters {
         }
     }
 
+    private func _setBufferTimeNear(_ bufferTime: UInt32) throws {
+        var bufferTime: UInt32 = bufferTime
+        var dir: Int32 = 0
+        let err = snd_pcm_hw_params_set_buffer_time_near(pcm, params, &bufferTime, &dir)
+        if err < 0 { 
+            let description = String(cString: snd_strerror(err))
+            throw ALSAError(code: err, description: description)
+        }   
+    }
+
+    private func _setPeriodTimeNear(_ periodTime: UInt32) throws {
+        var periodTime: UInt32 = periodTime
+        var dir: Int32 = 0
+        let err = snd_pcm_hw_params_set_period_time_near(pcm, params, &periodTime, &dir)
+        if err < 0 { 
+            let description = String(cString: snd_strerror(err))
+            throw ALSAError(code: err, description: description)
+        }   
+    }
+
     private func saveParameters() throws {
         let err = snd_pcm_hw_params(pcm, params)
         if err < 0 { 
@@ -157,6 +189,13 @@ private extension HardwareParameters {
         if let rateNear {
             try _setRateNear(rateNear)
         }
+        if let bufferTimeNear {
+            try _setBufferTimeNear(bufferTimeNear)
+        }
+        if let periodTimeNear {
+            try _setPeriodTimeNear(periodTimeNear)
+        }
+
         try saveParameters()
     }
 }
