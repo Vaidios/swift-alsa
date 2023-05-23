@@ -1,7 +1,7 @@
 import Foundation
 import CALSA
 
-enum PCMDeviceError: Error {
+public enum PCMDeviceError: Error {
     case notAvailable
     case invalidState
     case overrunOccured
@@ -12,9 +12,9 @@ enum PCMDeviceError: Error {
     case unknown
 }
 
-struct ALSAError: Error {
-    let code: Int32
-    let description: String
+public struct ALSAError: Error {
+    public let code: Int32
+    public let description: String
 }
 
 public class PCMDevice { 
@@ -36,7 +36,6 @@ public class PCMDevice {
         guard let tempPCM else { throw PCMDeviceError.notAvailable }
         self.pcm = tempPCM
         self.hwParams = try HardwareParameters(pcm: pcm)
-        // setupParamsPtr()
     }
     
     public convenience init(format: PCMFormat, access: PCMAccess, channels: UInt32, rate: UInt32, softResample: Int32, latency: UInt32) throws {
@@ -87,10 +86,8 @@ public class PCMDevice {
     }
 
     public func read(to buffer: inout [UInt8], size: UInt) throws -> Int {
-        // let bufferCount = UInt(buffer.count)
-        // let frameCount = bufferCount / size
-        return try buffer.withUnsafeMutableBufferPointer { bufferPtr in 
-            return try read(buffer: bufferPtr.baseAddress!, frameCount: size)
+        try buffer.withUnsafeMutableBufferPointer { bufferPtr in 
+            try read(buffer: bufferPtr.baseAddress!, frameCount: size)
         }
     }
 
@@ -101,7 +98,6 @@ public class PCMDevice {
             case -EBADFD:
                 throw PCMDeviceError.invalidState
             case -EPIPE:
-                snd_pcm_prepare(pcm)
                 throw PCMDeviceError.overrunOccured
             case -ESTRPIPE:
                 throw PCMDeviceError.suspendEventOccured
@@ -111,7 +107,7 @@ public class PCMDevice {
     }
 
     public func write(from buffer: inout [UInt8], size: UInt) throws -> Int {
-        return try buffer.withUnsafeMutableBufferPointer { [weak self] bufferPtr in
+        try buffer.withUnsafeMutableBufferPointer { [weak self] bufferPtr in
             try self?.write(buffer: bufferPtr.baseAddress!, size: size) ?? 0
         }
     }
