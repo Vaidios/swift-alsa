@@ -18,11 +18,19 @@
 </p>
 
 
-<p align="center">
+SwiftyALSA is a Swift package library that acts as a seamless and efficient wrapper around the ALSA (Advanced Linux Sound Architecture) library. It enables Swift developers to conveniently integrate audio functionality in their Linux-based applications by tapping into the power of ALSA.
 
-_[ A brief synopsis of this library ]._
+## Key Features:
 
-</p>
+- **Sound Playback & Recording:** SwiftyALSA allows developers to integrate sound playback and recording functionalities into their applications, supporting various audio formats.
+  
+- **Hardware Configuration:** The library provides access to ALSA's hardware-level controls, allowing configuration of sound cards and other audio devices.
+  
+- **Intuitive Error Handling:** SwiftALSA translates ALSA's error codes into Swift-friendly error objects, simplifying the process of error handling for developers.
+
+SwiftALSA is regularly updated to ensure compatibility with the most recent versions of Swift and ALSA. It is an open-source project and welcomes contributions from the Swift and ALSA developer communities.
+
+**NOTE:** Utilizing SwiftALSA requires a basic understanding of ALSA's concepts and architecture, as it's essentially a Swift interface to the underlying ALSA library.
 
 
 ## Installation
