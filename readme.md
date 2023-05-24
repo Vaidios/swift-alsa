@@ -80,21 +80,13 @@ Then simply `import ALSA` wherever you’d like to use it.
 
 ## 🗺 Roadmap
 
-- World Domination
+- Extending available ALSA API's, contributions are very welcome!
 
 ## 💻 Developing
 
 ### Requirements
 
-- Xcode 14.0+
-
-### ✍️ Building The Documentation
-
-Documentation is built with [DocC](https://developer.apple.com/documentation/docc) (see [Apple's guidance for more details about creating DocC content](https://developer.apple.com/documentation/docc/api-reference-syntax)).
-
-To build and preview the documentation output, follow the instructions for the [here](https://github.com/apple/swift-docc-plugin#previewing-documentation) for the `Swift-DocC Plugin`.
-
-If you're using VSCode, there's also a [task configuration](./.vscode/tasks.json) that will handle this directly from the editor 💪
+- Swift 5.8
 
 ## 🏷 License
 
