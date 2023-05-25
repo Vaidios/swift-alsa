@@ -3,47 +3,47 @@
 
 import PackageDescription
 
-let package = Package(
+let package = Package(name: "ALSA")
+
+package.products = [
+  .library(name: "ALSA", targets: ["ALSA"])
+]
+
+package.providers = [.apt(["libasound2-dev"])]
+
+package.dependencies = [
+  .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0")
+]
+
+package.targets = [
+  
+  .target(
     name: "ALSA",
-    products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "ALSA",
-            targets: ["ALSA"]),
-    ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0")
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "ALSA",
-            dependencies: [
-                "CALSA"
-            ]
-        ),
-
-        .executableTarget(
-            name: "Example", 
-            dependencies: [
-                .target(name: "ALSA"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            resources: [
-                .process("Assets")
-            ]
-        ),
-
-        .systemLibrary(
-            name: "CALSA", 
-            path: nil, 
-            pkgConfig: nil, 
-            providers: [.apt(["libasound2-dev"])]
-        ),
-
-        .testTarget(
-            name: "ALSATests",
-            dependencies: ["ALSA"]),
+      "CALSA"
     ]
-)
+  ),
+  
+    .executableTarget(
+      name: "Example",
+      dependencies: [
+        .target(name: "ALSA"),
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
+      ],
+      resources: [
+        .process("Assets")
+      ]
+    ),
+  
+    .systemLibrary(
+      name: "CALSA",
+      path: nil,
+      pkgConfig: nil,
+      providers: [.apt(["libasound2-dev"])]
+    ),
+  
+    .testTarget(
+      name: "ALSATests",
+      dependencies: ["ALSA"]
+    ),
+]
