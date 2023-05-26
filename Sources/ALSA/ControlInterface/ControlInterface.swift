@@ -20,7 +20,6 @@ final class ControlInterface {
             if let cardInfoPtr = cardInfoPtr {
                 defer { snd_ctl_card_info_free(cardInfoPtr) }
                 var ctlPtr: OpaquePointer?
-                var name: UnsafePointer<Int8>? = snd_ctl_card_info_get_id(cardInfoPtr)
                 let cardName = "hw:\(card)"
 
                 if snd_ctl_open(&ctlPtr, cardName, 0) >= 0,

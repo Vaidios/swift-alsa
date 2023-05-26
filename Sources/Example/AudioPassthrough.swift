@@ -37,8 +37,8 @@ public class AudioPassThrough {
         while true {
             try Task.checkCancellation()
             do {
-                let framesRead = try capturePCM.read(to: &buffer, size: UInt(framesPerPeriod))
-                let framesWritten = try playbackPCM.write(from: &buffer, size: UInt(framesPerPeriod))
+                let _ = try capturePCM.read(to: &buffer, size: UInt(framesPerPeriod))
+                let _ = try playbackPCM.write(from: &buffer, size: UInt(framesPerPeriod))
             } catch {
                 print("error: \(error)")
             }

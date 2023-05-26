@@ -87,7 +87,7 @@ struct SoundPlayback {
             var bufferData = try wavFile.readData(offset: try wavFile.filehandle.offset(), length: bufferSize)
             let bufferCount = UInt(bufferData.count)
             let frameCount = bufferCount / UInt(bytesPerFrame)
-            let framesWritten = try pcm.write(from: &bufferData, size: frameCount)
+            let _ = try pcm.write(from: &bufferData, size: frameCount)
         }
 
     }
