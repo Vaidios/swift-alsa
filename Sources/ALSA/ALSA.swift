@@ -12,8 +12,6 @@ public class ALSA {
     }
 
     static public func listDevices() throws -> [ALSADeviceInfo] {
-        let list = try ALSADevices.getList()
-        print(ControlInterface().getSoundCards())
-        return list
+        try ALSADevices.getList()
     }
 }

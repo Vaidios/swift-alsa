@@ -9,8 +9,6 @@ package.products = [
   .library(name: "ALSA", targets: ["ALSA"])
 ]
 
-package.providers = [.apt(["libasound2-dev"])]
-
 package.dependencies = [
   .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0")
 ]
