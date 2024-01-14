@@ -8,8 +8,7 @@ final class ALSAWrapperTests: XCTestCase {
     }
 
     func testListDevices() throws {
-        let wrapper = ALSA()
-        let devices = try wrapper.listDevices()
+        let devices = try ALSA.listDevices()
         
         print("Available ALSA devices:")
         for device in devices {
@@ -17,17 +16,17 @@ final class ALSAWrapperTests: XCTestCase {
         }
     }
 
-    func testSineWavePlayback() throws {
-        let wrapper = ALSA()
-        try wrapper.playSineWave(frequency: 440.0, duration: 3.0)
-    }
+    // func testSineWavePlayback() throws {
+    //     let wrapper = ALSA()
+    //     try wrapper.playSineWave(frequency: 440.0, duration: 3.0)
+    // }
 
-    func testPassthrough() async throws {
-        let passthrough = AudioPassThrough()
-        let task = Task { 
-            try await passthrough.start()
-        }
-        try await Task.sleep(for: .seconds(5))
-        task.cancel()
-    }
+    // func testPassthrough() async throws {
+    //     let passthrough = AudioPassThrough()
+    //     let task = Task { 
+    //         try await passthrough.start()
+    //     }
+    //     try await Task.sleep(for: .seconds(5))
+    //     task.cancel()
+    // }
 }

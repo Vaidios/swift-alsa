@@ -40,22 +40,22 @@ public extension PCMDevice {
     }
 
     func printSupportedSampleRates() throws {
-    var minRate: UInt32 = 0
-    var maxRate: UInt32 = 0
-    var dir: Int32 = 0
+        var minRate: UInt32 = 0
+        var maxRate: UInt32 = 0
+        var dir: Int32 = 0
 
-    let minErr = snd_pcm_hw_params_get_rate_min(params, &minRate, &dir)
-    if minErr < 0 {
-        let description = String(cString: snd_strerror(minErr))
-        throw ALSAError(code: minErr, description: description)
+        let minErr = snd_pcm_hw_params_get_rate_min(params, &minRate, &dir)
+        if minErr < 0 {
+            let description = String(cString: snd_strerror(minErr))
+            throw ALSAError(code: minErr, description: description)
+        }
+
+        let maxErr = snd_pcm_hw_params_get_rate_max(params, &maxRate, &dir)
+        if maxErr < 0 {
+            let description = String(cString: snd_strerror(maxErr))
+            throw ALSAError(code: maxErr, description: description)
+        }
+
+        print("Supported sample rates: \(minRate) to \(maxRate) Hz")
     }
-
-    let maxErr = snd_pcm_hw_params_get_rate_max(params, &maxRate, &dir)
-    if maxErr < 0 {
-        let description = String(cString: snd_strerror(maxErr))
-        throw ALSAError(code: maxErr, description: description)
-    }
-
-    print("Supported sample rates: \(minRate) to \(maxRate) Hz")
-}
 }

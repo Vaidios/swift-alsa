@@ -74,6 +74,12 @@ targets: [
 ]
 ```
 
+You also have to install an ALSA C library if not already available. Hopefully in the future, swift itself will prompt to install the library.
+```bash
+sudo apt update && sudo apt upgrade
+sudo apt install libasound2-dev
+```
+
 Then simply `import ALSA` wherever you’d like to use it.
 
 ## Usage
