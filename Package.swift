@@ -3,7 +3,7 @@
 
 import PackageDescription
 
-let package = Package(name: "ALSA")
+let package = Package(name: "swift-alsa")
 
 package.products = [
   .library(name: "ALSA", targets: ["ALSA"])
@@ -41,7 +41,7 @@ package.targets = [
     ),
   
     .testTarget(
-      name: "ALSATests",
+      name: "PCMDeviceTests",
       dependencies: ["ALSA"]
     ),
 ]

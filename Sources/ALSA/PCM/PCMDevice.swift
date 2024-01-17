@@ -9,6 +9,7 @@ public enum PCMDeviceError: Error {
     case suspendEventOccured
     case setAccessFailed
     case hardwareParametersCreationFailed
+    case invalidDeviceChosen([ALSADeviceInfo])
     case unknown
 }
 
@@ -27,8 +28,10 @@ public final class PCMDevice {
     internal var params: OpaquePointer?
 
     public init(device: String = "default", stream: PCMStream = .playback, mode: Int32 = 0) throws {
+        let devices = try ALSADevices.getList()
+        guard let destinationDevice = devices.first(where: { $0.name == device }) else { throw PCMDeviceError.invalidDeviceChosen(devices) }
         var tempPCM: OpaquePointer?
-        let err = snd_pcm_open(&tempPCM, device, stream.cType, mode)
+        let err = snd_pcm_open(&tempPCM, destinationDevice.name, stream.cType, mode)
         if err < 0 { 
             let description = String(cString: snd_strerror(err))
             throw ALSAError(code: err, description: description)
