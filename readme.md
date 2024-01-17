@@ -1,4 +1,4 @@
-# SwiftyALSA
+# ALSA wrapper for swift
 
 <p>
 
@@ -18,7 +18,7 @@
 </p>
 
 
-SwiftyALSA is a Swift package library that acts as a seamless and efficient wrapper around the ALSA (Advanced Linux Sound Architecture) library. It enables Swift developers to conveniently integrate audio functionality in their Linux-based applications by tapping into the power of ALSA.
+This is a Swift package library that acts as a seamless and efficient wrapper around the ALSA (Advanced Linux Sound Architecture) library. It enables Swift developers to conveniently integrate audio functionality in their Linux-based applications by tapping into the power of ALSA.
 
 ## Key Features:
 
@@ -41,22 +41,22 @@ Xcode installation is not officialy supported, as this library is for linux only
 
 ### Swift Package Manager Projects
 
-You can add `SwiftyALSA` as a package dependency in your `Package.swift` file:
+You can add `swift-alsa` as a package dependency in your `Package.swift` file:
 
 ```swift
 let package = Package(
     //...
     dependencies: [
         .package(
-            url: "https://github.com/Vaidios/SwiftyALSA.git",
-            branch: "master"
+            url: "https://github.com/Vaidios/swift-alsa.git",
+            branch: "main"
         ),
     ],
     //...
 )
 ```
 
-From there, refer to the `ALSA` "product" delivered by the `SwiftyALSA` "package" inside of any of your project's target dependencies:
+From there, refer to the `ALSA` "product" delivered by the `swift-alsa` "package" inside of any of your project's target dependencies:
 
 ```swift
 targets: [
@@ -65,13 +65,17 @@ targets: [
         dependencies: [
             .product(
                 name: "ALSA",
-                package: "SwiftyALSA"
+                package: "swift-alsa"
             ),
         ],
-        ...
     ),
-    ...
 ]
+```
+
+You also have to install an ALSA C library if not already available. Hopefully in the future, swift itself will prompt to install the library.
+```bash
+sudo apt update && sudo apt upgrade
+sudo apt install libasound2-dev
 ```
 
 Then simply `import ALSA` wherever you’d like to use it.
@@ -90,4 +94,4 @@ Then simply `import ALSA` wherever you’d like to use it.
 
 ## 🏷 License
 
-`SwiftyALSA` is available under the MIT license. See the [LICENSE file](./LICENSE) for more info.
+`swift-alsa` is available under the MIT license. See the [LICENSE file](./LICENSE) for more info.

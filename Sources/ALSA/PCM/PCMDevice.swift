@@ -17,7 +17,7 @@ public struct ALSAError: Error {
     public let description: String
 }
 
-public class PCMDevice { 
+public final class PCMDevice { 
 
     public var name: String { String(cString: snd_pcm_name(pcm)) }
     public var state: String { String(cString: snd_pcm_state_name(snd_pcm_state(pcm))) }
